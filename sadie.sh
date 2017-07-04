@@ -175,9 +175,10 @@ fi
 if (dialog --backtitle "$BACKTITLE" --title "Ready to Flash" --yesno "SADIE is ready to flash Android onto your Rock64. Continue?" 20 60) then
 	cd $IMAGEDIR
 	rkinstall
+	echo ""
+	echo "Flash is complete! Your Rock64 now should be booting into Android! It will take some time for it to boot first time."
+	echo "Enjoy your system. :)"
+
 else
 	echo "Exiting without flashing."
 fi
-echo ""
-echo "Flash is complete! Your Rock64 now should be booting into Android! It will take some time for it to boot first time."
-echo "Enjoy your system. :)"
