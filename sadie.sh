@@ -16,6 +16,8 @@ echo "============= by Matthew Petry (fire219) ============="
 echo "== Additional scripting by Kamil Trzciński (ayufan) =="
 echo "======================================================"
 echo ""
+echo "SADIE version 1.0 (20170407)"
+echo ""
 echo "This script will download and flash Android 7.1 to your Rock64 board."
 echo ""
 echo "IMPORTANT NOTES:"
@@ -43,11 +45,11 @@ echo "Stage 1: Detect host distribution"
 PKGINSTALL=""
 if [ -e /usr/bin/apt ] ; then
 	PKGINSTALL="apt-get install -q -y "
-    	echo "Ubuntu detected."
+    	echo "apt package manager detected."
 fi
 if [ -e /usr/bin/dnf ] ; then
         PKGINSTALL="dnf install -q -y "
-        echo "Fedora detected."
+        echo "dnf package manager detected."
 fi
 
 echo "Stage 2: Check for essential utilities"
@@ -56,7 +58,7 @@ for i in dialog make gcc wget unzip; do
 	if ! hash $i &> /dev/null ; then
 		if [ "$PKGINSTALL" = "" ] ; then
 			echo "You are missing the utility '$i' and SADIE is unable to install it"
-			echo "On your distro. Please do this manually and then restart SADIE."
+			echo "on your distro. Please do this manually and then restart SADIE."
 			exit 1
 		fi
 		echo "$i not found. Now installing; please wait a moment."
