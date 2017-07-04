@@ -1,0 +1,26 @@
+======================================================
+======================= SADIE ========================
+=== Simple Android Download and Install Executable ===
+======================================================
+============= Made for the Rock64 board  =============
+============= by Matthew Petry (fire219) =============
+== Additional scripting by Kamil Trzciński (ayufan) ==
+======================================================
+
+SADIE is a bash script designed to make the installation of Android to a Rock64 board extremely easy.
+
+Only three steps required!
+
+1. Download it!
+2. sudo chmod +x sadie.sh
+3. sudo ./sadie.sh
+
+SADIE does the following for you:
+
+- Installs all required utilities (if you are on a system with apt or dnf package manager)
+- Downloads the Android image of your choosing
+- Prepares image for use
+- Guides you through how to put your Rock64 into the required mode
+- Flashes the image on to your Rock64
+
+SADIE is licensed under the MIT License. (See LICENSE)
