@@ -132,10 +132,8 @@ if [ ! -e /usr/local/bin/rkinstall ] ; then
 fi
 dialog  --backtitle "$BACKTITLE" --title "Please Wait..." --infobox "Unzipping image..." 10 60
 IMAGEDIR="${IMAGEFILE%.*}"
-if [ -d $IMAGEDIR ] ; then
-	rm -r $IMAGEDIR
-fi
-unzip -qq  $IMAGEFILEREL
+
+unzip -qq -o  $IMAGEFILEREL
  
 clear
 echo "===Loader Mode Instructions==="
