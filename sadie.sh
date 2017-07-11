@@ -13,10 +13,11 @@ echo "=== Simple Android Download and Install Executable ==="
 echo "======================================================"
 echo "============= Made for the Rock64 board  ============="
 echo "============= by Matthew Petry (fire219) ============="
+echo "================== and Contributors =================="
 echo "== Additional scripting by Kamil Trzciński (ayufan) =="
 echo "======================================================"
 echo ""
-echo "SADIE version 1.02 (20170907)"
+echo "SADIE version 1.1 (July 11 2017)"
 echo ""
 echo "This script will download and flash Android 7.1 to your Rock64 board."
 echo ""
@@ -76,8 +77,8 @@ else
 	echo "rkflashtool detected."
 fi
 
-OPTIONS=(1 "Android 'Desktop' (currently unstable)"
-	 2 "Android TV (Recommended)")
+OPTIONS=(1 "Android TV (Recommended)"
+	 2 "Android 'Desktop' (currently nonfunctional)")
 
 CHOICE=$(dialog --clear \
 		--backtitle "$BACKTITLE" \
@@ -88,16 +89,16 @@ CHOICE=$(dialog --clear \
                 2>&1 >/dev/tty)
 
 if [[ -z "$CHOICE" ]]; then
-  echo "User abort! Thank you for using SADIE!"
+  echo "Exiting SADIE without downloading image."
   exit 1
 fi
 
 case $CHOICE in
 	1)
-		IMAGETYPE="desktop"
+		IMAGETYPE="box"
 		;;
 	2)
-		IMAGETYPE="box"
+		IMAGETYPE="desktop"
 		;;
 esac
 
@@ -136,9 +137,9 @@ IMAGEURL=$(curl -f -sS https://api.github.com/repos/$REPO/releases | \
 if [[ -z "$IMAGEURL" ]]; then
     echo "Primary URL search filed, trying secondary lookup... "
     if [[ "$IMAGETYPE" == "desktop" ]]; then
-        IMAGEURL=$(wget fire219.kotori.me/sadie/desktop-image.txt -q -O -)
+        IMAGEURL=$(wget https://raw.githubusercontent.com/fire219/sadie/master/desktop-image.txt -q -O -)
     else
-        IMAGEURL=$(wget fire219.kotori.me/sadie/box-image.txt -q -O -)
+        IMAGEURL=$(wget https://raw.githubusercontent.com/fire219/sadie/master/box-image.txt -q -O -)
     fi
 fi
 
@@ -179,7 +180,13 @@ fi
 dialog  --backtitle "$BACKTITLE" --title "Please Wait..." --infobox "Unzipping image..." 10 60
 IMAGEDIR="${IMAGEFILE%.*}"
 
-unzip -qq -o  $IMAGEFILEREL
+unzip -q -o  $IMAGEFILEREL  &> tempziplog.txt
+
+if $? != 0 ; then
+	echo "Something went wrong while unzipping the image! Please check 'tempziplog.txt' and"
+	echo "extract the image files manually if possible."
+	exit 1
+fi
 
 clear
 echo "===Loader Mode Instructions==="
