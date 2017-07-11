@@ -88,6 +88,11 @@ CHOICE=$(dialog --clear \
                 "${OPTIONS[@]}" \
                 2>&1 >/dev/tty)
 
+if [[ -z "$CHOICE" ]]; then
+  echo "User abort! Thank you for using SADIE!"
+  exit 1
+fi
+
 case $CHOICE in
 	1)
 		IMAGETYPE="desktop"
