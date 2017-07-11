@@ -90,11 +90,9 @@ CHOICE=$(dialog --clear \
 case $CHOICE in
 	1)
 		IMAGETYPE="desktop"
-#		IMAGEURL=$(wget fire219.kotori.me/sadie/desktop-image.txt -q -O -)
 		;;
 	2)
 		IMAGETYPE="box"
-#                IMAGEURL=$(wget fire219.kotori.me/sadie/box-image.txt -q -O -)
 		;;
 esac
 
