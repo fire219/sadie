@@ -27,15 +27,13 @@ echo ""
 echo "2. If you wish to install Android to onboard eMMC, you *MUST* remove"
 echo "   your SD card if you have one."
 echo ""
-read -rsp $'Press any key to continue...\n' -n 1 key  
+read -rsp $'Press any key to continue...\n' -n 1 key
 
 HEIGHT=30
 WIDTH=80
 CHOICE_HEIGHT=4
 BACKTITLE="Simple Android Download and Install Executable (SADIE)"
 MENU="Please select one of the following options:"
-
-
 
 clear
 echo "====Preparation===="
@@ -54,7 +52,7 @@ fi
 
 echo "Stage 2: Check for essential utilities"
 echo ""
-for i in dialog make gcc wget unzip; do
+for i in dialog make gcc wget unzip jq; do
 	if ! hash $i &> /dev/null ; then
 		if [ "$PKGINSTALL" = "" ] ; then
 			echo "You are missing the utility '$i' and SADIE is unable to install it"
@@ -77,6 +75,7 @@ if ! hash rkflashtool &> /dev/null ; then
 else
 	echo "rkflashtool detected."
 fi
+
 OPTIONS=(1 "Android 'Desktop' (currently unstable)"
 	 2 "Android TV (Recommended)")
 
@@ -96,15 +95,57 @@ fi
 case $CHOICE in
 	1)
 		IMAGETYPE="desktop"
-		clear
-		IMAGEURL=$(wget fire219.kotori.me/sadie/desktop-image.txt -q -O -)
 		;;
 	2)
 		IMAGETYPE="box"
-                clear
-                IMAGEURL=$(wget fire219.kotori.me/sadie/box-image.txt -q -O -)
 		;;
 esac
+
+clear
+
+echo "SADIE is looking for the image download link..."
+
+REPO="ayufan-rock64/android-7.1"
+if [[ "$IMAGETYPE" == "desktop" ]]; then
+	PREFIX="android-7.1-rock-64-rk3328-v"
+else
+	PREFIX="android-7.1-rock-64-rk3328_box-v"
+fi
+SUFFIX="-r[0-9]*.zip"
+
+VERSION="$1"
+
+if [[ -z "$VERSION" ]]; then
+    VERSION=$(curl -f -sS https://api.github.com/repos/$REPO/releases/latest | jq -r ".tag_name")
+    if [ -z "$VERSION" ]; then
+        echo "Latest release was not found! This should not happen!"
+    fi
+
+    echo "Using latest release: $VERSION from https://github.com/$REPO/releases."
+fi
+
+NAME="$PREFIX$VERSION$SUFFIX"
+NAME_SAFE="${NAME//./\\.}"
+VERSION_SAFE="${VERSION//./\\.}"
+
+echo "Looking for download URL..."
+IMAGEURL=$(curl -f -sS https://api.github.com/repos/$REPO/releases | \
+    jq -r ".[].assets | .[].browser_download_url" | \
+    ( grep -o "https://github\.com/$REPO/releases/download/$VERSION_SAFE/$NAME_SAFE" || true))
+
+if [[ -z "$IMAGEURL" ]]; then
+    echo "Primary URL search filed, trying secondary lookup... "
+    if [[ "$IMAGETYPE" == "desktop" ]]; then
+        IMAGEURL=$(wget fire219.kotori.me/sadie/desktop-image.txt -q -O -)
+    else
+        IMAGEURL=$(wget fire219.kotori.me/sadie/box-image.txt -q -O -)
+    fi
+fi
+
+if [[ -z "$IMAGEURL" ]]; then
+    echo "SADIE was unable to determine the image download URL! Sorry!"
+    exit 1
+fi
 
 IMAGEFILEREL="${IMAGEURL##*/}"
 IMAGEFILE=$(pwd)"/${IMAGEURL##*/}"
@@ -139,7 +180,7 @@ dialog  --backtitle "$BACKTITLE" --title "Please Wait..." --infobox "Unzipping i
 IMAGEDIR="${IMAGEFILE%.*}"
 
 unzip -qq -o  $IMAGEFILEREL
- 
+
 clear
 echo "===Loader Mode Instructions==="
 echo ""
@@ -173,7 +214,7 @@ else
 			loadermode="ready"
 		fi
 	done
-fi 
+fi
 
 if (dialog --backtitle "$BACKTITLE" --title "Ready to Flash" --yesno "SADIE is ready to flash Android onto your Rock64. Continue?" 20 60) then
 	cd $IMAGEDIR
