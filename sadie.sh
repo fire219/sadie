@@ -27,15 +27,13 @@ echo ""
 echo "2. If you wish to install Android to onboard eMMC, you *MUST* remove"
 echo "   your SD card if you have one."
 echo ""
-read -rsp $'Press any key to continue...\n' -n 1 key  
+read -rsp $'Press any key to continue...\n' -n 1 key
 
 HEIGHT=30
 WIDTH=80
 CHOICE_HEIGHT=4
 BACKTITLE="Simple Android Download and Install Executable (SADIE)"
 MENU="Please select one of the following options:"
-
-
 
 clear
 echo "====Preparation===="
@@ -77,6 +75,7 @@ if ! hash rkflashtool &> /dev/null ; then
 else
 	echo "rkflashtool detected."
 fi
+
 OPTIONS=(1 "Android 'Desktop' (currently unstable)"
 	 2 "Android TV (Recommended)")
 
@@ -134,7 +133,7 @@ dialog  --backtitle "$BACKTITLE" --title "Please Wait..." --infobox "Unzipping i
 IMAGEDIR="${IMAGEFILE%.*}"
 
 unzip -qq -o  $IMAGEFILEREL
- 
+
 clear
 echo "===Loader Mode Instructions==="
 echo ""
@@ -168,7 +167,7 @@ else
 			loadermode="ready"
 		fi
 	done
-fi 
+fi
 
 if (dialog --backtitle "$BACKTITLE" --title "Ready to Flash" --yesno "SADIE is ready to flash Android onto your Rock64. Continue?" 20 60) then
 	cd $IMAGEDIR
